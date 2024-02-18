@@ -1,19 +1,16 @@
+import express, { Express } from 'express';
+import { SetupServer } from './setupServer';
 
-import express from 'express';
-import mongoose from 'mongoose';
-import cors from 'cors';
-import cookieParser from 'cookie-parser';
-import dotenv from 'dotenv';
 
-const app = express();
-dotenv.config();
 
-app.use(express.json());
-app.use(express.urlencoded({extended:true}));
-app.use(cors());
-app.use(cookieParser());
+class MainApplication {
+    public initServer():void{
+        const app:Express = express();
+        const server = new SetupServer(app);
+        server.start();
+    }
+}
 
-app.listen(5500,()=>{
-    console.log(`Server running on port 5500`)
-})
+const application: MainApplication = new MainApplication();
+application.initServer();
 
