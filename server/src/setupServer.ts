@@ -6,9 +6,11 @@ import compression from "compression";
 import helmet from "helmet";
 import hpp from "hpp";
 import { rateLimit } from "express-rate-limit";
-import http from 'http';
+import http from "http";
+import requestIp from "request-ip";
 
-import mainRoute from './routes';
+import mainRoute from "./routes";
+import { config } from "./config";
 
 export class SetupServer {
   private app: Application;
@@ -25,16 +27,25 @@ export class SetupServer {
   }
 
   private securityMiddleware(app: Application): void {
-    app.use(cors());
+    app.use(
+      cors({
+        origin:
+          config.NODE_ENV === "development" ? "http://localhost:5173" : "*",
+        credentials: true,
+        optionsSuccessStatus: 200,
+      })
+    );
+    app.use(requestIp.mw());
     app.use(cookieParser());
     app.use(helmet());
     app.use(hpp());
+    // app.set('trust proxy', true); // Enable trust proxy setting to get correct IP address
     app.use(
       rateLimit({
         windowMs: 15 * 60 * 1000,
         limit: 100,
         standardHeaders: "draft-7",
-        legacyHeaders: false, // Disable the `X-RateLimit-*` headers.
+        legacyHeaders: false,
       })
     );
   }
@@ -45,17 +56,17 @@ export class SetupServer {
     app.use(express.urlencoded({ extended: true }));
   }
 
-  private routesMiddleware(app:Application):void{
-    mainRoute(app)
+  private routesMiddleware(app: Application): void {
+    mainRoute(app);
   }
 
-  private globalErrorHandler(app:Application):void{
-    app.use('*', (req, res) => {
-      res.status(500).json({message: 'Server error.'})
-    })
+  private globalErrorHandler(app: Application): void {
+    app.use("*", (req, res) => {
+      res.status(500).json({ message: "Server error." });
+    });
   }
-  private startServer(app:Application):void{
-    const httpServer = http.createServer(app)
+  private startServer(app: Application): void {
+    const httpServer = http.createServer(app);
     httpServer.listen(5500, () => {
       console.log(`STARTING SERVER ON PORT 5500 PROCESS ID =${process.pid}`);
     });

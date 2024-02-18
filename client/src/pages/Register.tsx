@@ -1,8 +1,10 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
+import { IRegister } from "../interface/type";
+import { apiCall } from "../config/http";
 
 const Register = () => {
-  const [registerData, setRegisterData] = useState({
+  const [registerData, setRegisterData] = useState<IRegister>({
     email: "",
     first_name: "",
     last_name: "",
@@ -16,7 +18,14 @@ const Register = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    console.log(registerData);
+    apiCall
+      .register(registerData)
+      .then((data) => {
+        console.log(data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   };
 
   return (

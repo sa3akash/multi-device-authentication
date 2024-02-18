@@ -1,8 +1,10 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { ILogin } from "../interface/type";
+import { apiCall } from "../config/http";
 
 const Login = () => {
-  const [loginData, setLoginData] = useState({
+  const [loginData, setLoginData] = useState<ILogin>({
     email: "",
     password: "",
   });
@@ -14,7 +16,14 @@ const Login = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    console.log(loginData);
+    apiCall
+      .login(loginData)
+      .then((data) => {
+        console.log(data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   };
   return (
     <div className="h-screen w-screen flex items-center justify-center">
