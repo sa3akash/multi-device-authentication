@@ -3,6 +3,7 @@ import { ILogin, IRegister } from "../interface/type";
 
 class ApiCall {
   private api: AxiosInstance;
+  private isRetry: boolean = false;
   private baseUrl: string =
     import.meta.env.VITE_NODE_ENV === "development"
       ? "http://localhost:5500/api/v1"
@@ -15,6 +16,22 @@ class ApiCall {
       },
       withCredentials: true
     });
+
+    this.api.interceptors.response.use(
+      (config) => {
+        return config;
+      },
+      async (error) => {
+        const originalRequest = error.config;
+        if (error.response.status === (401) && originalRequest && !this.isRetry) {
+          this.isRetry = true;
+          localStorage.clear();
+          window.location.replace('/login');
+        }
+        throw error;
+      },
+    );
+
   }
 
   register(data: IRegister) {
@@ -24,7 +41,14 @@ class ApiCall {
   login(data: ILogin) {
     return this.api.post("/login", data);
   }
+
+  logout(userToken:string) {
+    return this.api.put("/logout",{userToken});
+  }
   
+  logoutAll() {
+    return this.api.put("/logout-all",{});
+  }
   getSessions() {
     return this.api.get("/sessions");
   }

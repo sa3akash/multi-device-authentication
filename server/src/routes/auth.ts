@@ -11,6 +11,8 @@ class AuthRoute {
   public getRouter() {
     this.router.post("/register", authController.register);
     this.router.post("/login", authController.login);
+    this.router.put("/logout",authMiddleware.authenticate, authController.logOut);
+    this.router.put("/logout-all",authMiddleware.authenticate, authController.logOutAll);
     this.router.get("/sessions",authMiddleware.authenticate, authController.getSession);
     return this.router;
   }

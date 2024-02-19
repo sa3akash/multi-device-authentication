@@ -53,6 +53,7 @@ class Auth {
         }
       );
       const sevenDaysInMilliseconds = 7 * 24 * 60 * 60 * 1000; // 7 days in milliseconds
+      res.clearCookie("token")
       res.cookie("token", token, {
         httpOnly: true,
         expires: new Date(Date.now() + sevenDaysInMilliseconds),
@@ -117,6 +118,8 @@ class Auth {
           expiresIn: "7d",
         }
       );
+
+      res.clearCookie("token")
       const sevenDaysInMilliseconds = 7 * 24 * 60 * 60 * 1000; // 7 days in milliseconds
       res.cookie("token", token, {
         httpOnly: true,
@@ -136,6 +139,30 @@ class Auth {
       const sessions = await LoginHistory.find({ user_id: req.user?.id });
 
       res.status(200).json({ message: "all sessions", sessions });
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
+  public async logOut(req: Request, res: Response) {
+    try {
+
+      const {userToken} = req.body;
+
+      await LoginHistory.findOneAndDelete({token:userToken});
+
+      res.status(200).json({ message: "logout", userToken });
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
+  public async logOutAll(req: Request, res: Response) {
+    try {
+
+      await LoginHistory.deleteMany({$and:[{user_id:req.user?.id},{token:{$ne:req.user?.token}}]});
+
+      res.status(200).json({ message: "logout all" });
     } catch (err) {
       console.log(err);
     }
