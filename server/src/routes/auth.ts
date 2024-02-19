@@ -1,5 +1,6 @@
 import express, { Router } from "express";
 import { authController } from "../controller/auth";
+import { authMiddleware } from "../middlewares/auth";
 
 class AuthRoute {
   private router: Router;
@@ -9,6 +10,8 @@ class AuthRoute {
 
   public getRouter() {
     this.router.post("/register", authController.register);
+    this.router.post("/login", authController.login);
+    this.router.get("/sessions",authMiddleware.authenticate, authController.getSession);
     return this.router;
   }
 }

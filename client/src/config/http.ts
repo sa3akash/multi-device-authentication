@@ -20,8 +20,13 @@ class ApiCall {
   register(data: IRegister) {
     return this.api.post("/register", data);
   }
+
   login(data: ILogin) {
     return this.api.post("/login", data);
+  }
+  
+  getSessions() {
+    return this.api.get("/sessions");
   }
 }
 

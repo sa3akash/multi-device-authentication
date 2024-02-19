@@ -18,8 +18,9 @@ const Login = () => {
 
     apiCall
       .login(loginData)
-      .then((data) => {
+      .then(({ data }) => {
         console.log(data);
+        localStorage.setItem("sessionKey", data.sessionKey);
       })
       .catch((err) => {
         console.log(err);

@@ -20,8 +20,9 @@ const Register = () => {
 
     apiCall
       .register(registerData)
-      .then((data) => {
+      .then(({ data }) => {
         console.log(data);
+        localStorage.setItem("sessionKey", data.sessionKey);
       })
       .catch((err) => {
         console.log(err);
