@@ -5,7 +5,7 @@ const LoginHistorySchema = new mongoose.Schema(
     user_id: { type: mongoose.Types.ObjectId, ref: "User", required: true },
     user_agent: { type: String, required: true },
     ip: { type: String, required: true },
-    time: { type: String, required: true },
+    time: { type: Date, default: Date.now },
     token: {type:String, required:true, unique:true},
     device_info: {type:Object, default:{}},
   },
